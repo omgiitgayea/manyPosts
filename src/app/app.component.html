@@ -1,3 +1,9 @@
 <h1>
-  {{title}}
+    {{title}}
 </h1>
+
+<button *ngIf="!amLoggedIn" (click)="fbLogin()">
+    Log in to Facebook
+</button>
+
+<router-outlet></router-outlet>

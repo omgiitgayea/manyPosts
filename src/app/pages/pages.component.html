@@ -1,0 +1,5 @@
+<div *ngFor="let page of myPages">
+    <a [routerLink]="['/page', page.id]" (click)="pageClick(page.id, page.name, page.access_token)">
+        {{page.name}}
+    </a>
+</div>
