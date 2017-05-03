@@ -19,7 +19,7 @@ export class VideoListingComponent implements OnInit {
             data => {
                 this.pageVideos = data;
             }
-        )
+        );
     }
 
     ngOnInit() {
@@ -28,18 +28,42 @@ export class VideoListingComponent implements OnInit {
 
     testPdf(): void {
         let doc = new jsPDF();
-        let position = 0;
-        doc.setFontSize(20);
-        doc.text(20, 20, this.pageName);
-        doc.setFontSize(10);
-        for(let i = 0; i < this.pageVideos.length; i++) {
-            doc.text(this.pageVideos[i].thumbnails.data[0].uri, 20, 30 + this.LINK_SPACING * position);
-            position++;
-            doc.text(`https://www.facebook.com${this.pageVideos[i].permalink_url}`, 20, 30 + this.LINK_SPACING * position);
-            position++;
-        }
+        this.toDataURL(this.pageVideos[0].thumbnails.data[0].uri, (dataURL) => {
+            doc.addImage(dataURL, 20, 70, 160, 90);
+            doc.save(`${this.pageName}.pdf`);
+        }, 'image/jpeg');
+        // let position = 0;
+        // doc.setFontSize(20);
+        // doc.text(20, 20, this.pageName);
+        // doc.setFontSize(10);
+        // for (let i = 0; i < this.pageVideos.length; i++) {
+        //     doc.text(this.pageVideos[i].thumbnails.data[0].uri, 20, 30 + this.LINK_SPACING * position);
+        //     position++;
+        //     doc.text(`https://www.facebook.com${this.pageVideos[i].permalink_url}`, 20, 30 + this.LINK_SPACING * position);
+        //     position++;
+        // }
 
         // Save the PDF
-        doc.save(`${this.pageName}.pdf`);
+        // doc.save(`${this.pageName}.pdf`);
+    }
+
+    toDataURL(src, callback, outputFormat) {
+        let img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.onload = function () {
+            let canvas = document.createElement('canvas');
+            let ctx = canvas.getContext('2d');
+            let dataURL;
+            canvas.height = this.height;
+            canvas.width = this.width;
+            ctx.drawImage(this, 0, 0);
+            dataURL = canvas.toDataURL(outputFormat);
+            callback(dataURL);
+        };
+        img.src = src;
+        if (img.complete || img.complete === undefined) {
+            img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+            img.src = src;
+        }
     }
 }
